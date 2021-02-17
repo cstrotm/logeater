@@ -44,9 +44,10 @@ func main() {
 	for scanner.Scan() {
 		txt := scanner.Text()
 		i := strings.Index(txt, "validating")
-		msg := txt[i+11:]
-		errormap[msg]++
-
+		if (i > 0) {
+			msg := txt[i+11:]
+			errormap[msg]++
+		}
 	}
 	for _, res := range sortedKeys(errormap) {
 		fmt.Println(errormap[res], ":", res)
