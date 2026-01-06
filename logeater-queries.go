@@ -42,6 +42,7 @@ func sortedKeys(m map[string]int) []string {
 
 func main() {
 	listdomains := flag.Bool("d", false, "list domain names")
+	listtld := flag.Bool("1", false, "list top level domains")
 	listqueryip := flag.Bool("i", false, "list query IP addresses")
 	listqueryclass := flag.Bool("c", false, "list query network classes")
 	listquerytype := flag.Bool("t", false, "list query type")
@@ -50,6 +51,7 @@ func main() {
 	flag.Parse()
 
 	querynames := make(map[string]int)
+	querytld := make(map[string]int)
 	queryips := make(map[string]int)
 	queryclasses := make(map[string]int)
 	querytypes := make(map[string]int)
@@ -62,16 +64,18 @@ func main() {
 	qcd := 0
 	qsigned := 0
 	qtcp := 0
-	
+
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		txt := scanner.Text()
 		qnum++
-		
+
 		// collect query names
 		i := strings.Index(txt, "query: ")
 		qname := strings.SplitN(txt[i+7:], " ", 5)
 		querynames[strings.ToLower(qname[0])]++
+		tld := qname[0][strings.LastIndex(qname[0], ".")+1:]
+		querytld[strings.ToLower(tld)]++
 
 		// collect DNS query classes
 		queryclasses[qname[1]]++
@@ -118,6 +122,14 @@ func main() {
 		}
 	}
 
+	if *listtld {
+		fmt.Println("Query-TLD-Names\n")
+
+		for _, res := range sortedKeys(querytld) {
+			fmt.Println(querytld[res], ":", res)
+		}
+	}
+
 	if *listqueryclass {
 		fmt.Println("Query-Network-Classes\n")
 
@@ -160,5 +172,5 @@ func main() {
 		fmt.Println(qcd,": queries with DNSSEC validation disabled (CD-flag) (", qcd*100/qnum," % )")
 		fmt.Println(qsigned,": queries TSIG signed (", qsigned*100/qnum," % )")
 	}
-	
+
 }
