@@ -20,6 +20,22 @@ Query-Statistics
 1571               queries TSIG signed ( 7  % )
 ```
 
+Example - prining top 10 of TLDs used in queries
+
+```
+# ./logeater-queries -1 < query.log | head
+Query-TLD-Names
+
+324632 : net
+214054 : bind
+16751 : de
+10147 : com
+4764 : org
+1188 : host
+271 : social
+197 : arpa
+```
+
 Example - printing network classes and query types of queries:
 
 ```
@@ -46,7 +62,7 @@ Query-Network-Types
 Example - printing the top ten query IP addresses with reverse name
 resolution (can be slow):
 
-``` 
+```
 $ cat query.log | ./logeater-queries -i | head | column -t
 
 Query-IP-Addresses
